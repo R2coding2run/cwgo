@@ -1,4 +1,4 @@
-module github.com/cloudwego/cwgo
+module github.com/R2coding2run/cwgo
 
 go 1.18
 
