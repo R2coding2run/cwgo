@@ -63,6 +63,7 @@ func convertKitexArgs(sa *config.ServerArgument, kitexArgument *kargs.Arguments)
 	f.Var(&kitexArgument.ThriftOptions, "thrift", "Specify arguments for the thrift go compiler.")
 	f.DurationVar(&kitexArgument.ThriftPluginTimeLimit, "thrift-plugin-time-limit", generator.DefaultThriftPluginTimeLimit, "Specify thrift plugin execution time limit.")
 	f.Var(&kitexArgument.ThriftPlugins, "thrift-plugin", "Specify thrift plugin arguments for the thrift compiler.")
+	f.Var(&kitexArgument.ProtobufPlugins, "protobuf-plugin", "Specify protobuf plugin arguments for the protobuf compiler.(plugin_name:options:out_dir)")
 	f.Var(&kitexArgument.ProtobufOptions, "protobuf", "Specify arguments for the protobuf compiler.")
 	f.BoolVar(&kitexArgument.CombineService, "combine-service", false,
 		"Combine services in root thrift file.")
@@ -92,10 +93,23 @@ Flags:
 	}
 
 	// Non-standard template
-	if sa.Template != config.Standard {
-		kitexArgument.TemplateDir = sa.Template
+	if strings.HasSuffix(sa.Template, ".git") {
+		err = utils.GitClone(sa.Template, path.Join(tpl.KitexDir, "server"))
+		if err != nil {
+			return err
+		}
+		gitPath, err := utils.GitPath(sa.Template)
+		if err != nil {
+			return err
+		}
+		gitPath = path.Join(tpl.KitexDir, "server", gitPath)
+		kitexArgument.TemplateDir = gitPath
 	} else {
-		kitexArgument.TemplateDir = path.Join(tpl.KitexDir, "server", sa.Template)
+		if len(sa.Template) != 0 {
+			kitexArgument.TemplateDir = sa.Template
+		} else {
+			kitexArgument.TemplateDir = path.Join(tpl.KitexDir, "server", config.Standard)
+		}
 	}
 
 	kitexArgument.GenerateMain = false

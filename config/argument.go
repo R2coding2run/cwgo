@@ -90,8 +90,9 @@ const (
 )
 
 const (
-	OutDir  = "out_dir"
-	Verbose = "verbose"
+	OutDir   = "out_dir"
+	Verbose  = "verbose"
+	Template = "template"
 
 	Service         = "service"
 	ServiceType     = "type"
@@ -109,6 +110,7 @@ const (
 	UnitTest     = "unittest"
 	ModelPkgName = "model_pkg"
 	Nullable     = "nullable"
+	Signable     = "signable"
 	IndexTag     = "index_tag"
 	TypeTag      = "type_tag"
 )
